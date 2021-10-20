@@ -20,17 +20,37 @@ app.use(cors());
 app.options('*', cors());  // enable pre-flight
 app.use(require('body-parser').json());
 
+app.post('/unsubscribe', (req, res) => {
+  const app_name = req.body.app_name;
+  const email = req.body.email;
+  const device_code = req.body.device_code;
+
+  MongoClient.connect(url, function(err, db) {
+    if (err) throw err;
+    var dbo = db.db('notification_master');
+    var myobj = { email: email, app_name: app_name, device_id: device_code};
+    
+    dbo.collection('subscriptions').deleteOne(myquery, function(err, myobj) {
+      if (err) throw err;
+      db.close();
+    });
+  });
+
+  res.status(201).json({});
+
+});
 
 app.post('/subscribe', (req, res) => {
   const subscription = req.body.subscription;
   const app_name = req.body.app_name;
   const email = req.body.email;
+  const device_code = req.body.device_code;
 
   MongoClient.connect(url, function(err, db) {
     if (err) throw err;
     var dbo = db.db('notification_master');
     var id = uuidv4();
-    var myobj = {key: id, app_name: app_name, subscription: subscription};
+    var myobj = {key: id, app_name: app_name, device_id: device_code, subscription: subscription};
     dbo.collection('subscriptions').insertOne(myobj, function(err, res) {
       if (err) throw err;
 
