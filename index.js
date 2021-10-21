@@ -54,32 +54,34 @@ app.post('/subscribe', (req, res) => {
     dbo.collection('subscriptions').findOne({"email": email}, function(err, res) {
       if (err) throw err;
 
-      if (res.length() > 0) {
-        var id = uuidv4();
-        var myobj = {key: res['subscription'], app_name: app_name, device_id: device_code, subscription: subscription};
-        dbo.collection('subscriptions').insertOne(myobj, function(err, res) {
-          if (err) throw err;
-          db.close();
-        });
+      console.log(res);
 
-      } else {
-        var id = uuidv4();
-        var myobj = {key: id, app_name: app_name, device_id: device_code, subscription: subscription};
-        dbo.collection('subscriptions').insertOne(myobj, function(err, res) {
-          if (err) throw err;
+      // if (res.length() > 0) {
+      //   var id = uuidv4();
+      //   var myobj = {key: res['subscription'], app_name: app_name, device_id: device_code, subscription: subscription};
+      //   dbo.collection('subscriptions').insertOne(myobj, function(err, res) {
+      //     if (err) throw err;
+      //     db.close();
+      //   });
 
-          MongoClient.connect(url, function(err, db) {
-            if (err) throw err;
-            var dbo = db.db('notification_master');
-            var myobj = { email: email, app_name: app_name, subscription: id};
-            dbo.collection('users').insertOne(myobj, function(err, res) {
-              if (err) throw err;
-              db.close();
-            });
-          });
-          db.close();
-        });
-      }
+      // } else {
+      //   var id = uuidv4();
+      //   var myobj = {key: id, app_name: app_name, device_id: device_code, subscription: subscription};
+      //   dbo.collection('subscriptions').insertOne(myobj, function(err, res) {
+      //     if (err) throw err;
+
+      //     MongoClient.connect(url, function(err, db) {
+      //       if (err) throw err;
+      //       var dbo = db.db('notification_master');
+      //       var myobj = { email: email, app_name: app_name, subscription: id};
+      //       dbo.collection('users').insertOne(myobj, function(err, res) {
+      //         if (err) throw err;
+      //         db.close();
+      //       });
+      //     });
+      //     db.close();
+      //   });
+      // }
       
     });
     
