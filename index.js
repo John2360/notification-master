@@ -21,6 +21,7 @@ app.options('*', cors());  // enable pre-flight
 app.use(require('body-parser').json());
 
 app.post('/unsubscribe', (req, res) => {
+  // find user and delete with sub key
   const app_name = req.body.app_name;
   const email = req.body.email;
   const device_code = req.body.device_code;
@@ -47,24 +48,41 @@ app.post('/subscribe', (req, res) => {
   const device_code = req.body.device_id;
 
   MongoClient.connect(url, function(err, db) {
+    //check if user exists and add them
     if (err) throw err;
     var dbo = db.db('notification_master');
-    var id = uuidv4();
-    var myobj = {key: id, app_name: app_name, device_id: device_code, subscription: subscription};
-    dbo.collection('subscriptions').insertOne(myobj, function(err, res) {
+    dbo.collection('subscriptions').findOne({"email": email}, function(err, res) {
       if (err) throw err;
 
-      MongoClient.connect(url, function(err, db) {
-        if (err) throw err;
-        var dbo = db.db('notification_master');
-        var myobj = { email: email, app_name: app_name, subscription: id};
-        dbo.collection('users').insertOne(myobj, function(err, res) {
+      if (length(res) > 0) {
+        var id = uuidv4();
+        var myobj = {key: res['subscription'], app_name: app_name, device_id: device_code, subscription: subscription};
+        dbo.collection('subscriptions').insertOne(myobj, function(err, res) {
           if (err) throw err;
           db.close();
         });
-      });
-      db.close();
+
+      } else {
+        var id = uuidv4();
+        var myobj = {key: id, app_name: app_name, device_id: device_code, subscription: subscription};
+        dbo.collection('subscriptions').insertOne(myobj, function(err, res) {
+          if (err) throw err;
+
+          MongoClient.connect(url, function(err, db) {
+            if (err) throw err;
+            var dbo = db.db('notification_master');
+            var myobj = { email: email, app_name: app_name, subscription: id};
+            dbo.collection('users').insertOne(myobj, function(err, res) {
+              if (err) throw err;
+              db.close();
+            });
+          });
+          db.close();
+        });
+      }
+      
     });
+    
   });
 
   res.status(201).json({});
