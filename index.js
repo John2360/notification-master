@@ -44,7 +44,7 @@ app.post('/subscribe', (req, res) => {
   const subscription = req.body.subscription;
   const app_name = req.body.app_name;
   const email = req.body.email;
-  const device_code = req.body.device_code;
+  const device_code = req.body.device_id;
 
   MongoClient.connect(url, function(err, db) {
     if (err) throw err;
