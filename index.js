@@ -37,7 +37,7 @@ app.post('/unsubscribe', (req, res) => {
         if (err) throw err;
         var dbo = db.db('notification_master');
         var myobj = { key: res['subscription'], app_name: app_name, device_id: device_code};
-        dbo.collection('subscriptions').remove(myobj, function(err, res) {
+        dbo.collection('subscriptions').deleteOne(myobj, function(err, res) {
           if (err) throw err;
           db.close();
         });
