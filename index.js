@@ -30,7 +30,7 @@ app.post('/unsubscribe', (req, res) => {
     var dbo = db.db('notification_master');
     var myobj = { email: email, app_name: app_name, device_id: device_code};
     
-    dbo.collection('subscriptions').deleteOne(myquery, function(err, myobj) {
+    dbo.collection('subscriptions').deleteOne(myobj, function(err, result) {
       if (err) throw err;
       db.close();
     });
