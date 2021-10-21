@@ -24,7 +24,7 @@ app.post('/unsubscribe', (req, res) => {
   // find user and delete with sub key
   const app_name = req.body.app_name;
   const email = req.body.email;
-  const device_code = req.body.device_code;
+  const device_code = req.body.device_id;
 
   MongoClient.connect(url, function(err, db) {
     if (err) throw err;
@@ -37,7 +37,6 @@ app.post('/unsubscribe', (req, res) => {
         if (err) throw err;
         var dbo = db.db('notification_master');
         var myobj = { key: res['subscription'], app_name: app_name, device_id: device_code};
-        console.log(myobj);
         dbo.collection('subscriptions').deleteMany(myobj, function(err, res) {
           if (err) throw err;
           db.close();
@@ -85,8 +84,6 @@ app.post('/subscribe', (req, res) => {
     var dbo = db.db('notification_master');
     dbo.collection('users').findOne({"email": email}, function(err, res) {
       if (err) throw err;
-
-      console.log(res);
 
       if (res != null) {
         MongoClient.connect(url, function(err, db) {
