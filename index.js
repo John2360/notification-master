@@ -29,7 +29,6 @@ app.post('/unsubscribe', (req, res) => {
   MongoClient.connect(url, function(err, db) {
     if (err) throw err;
     var dbo = db.db('notification_master');
-    var myobj = { email: email, app_name: app_name, subscription: id};
     var myobj = { email: email};
     dbo.collection('users').findOne(myobj, function(err, res) {
       if (err) throw err;
@@ -37,7 +36,7 @@ app.post('/unsubscribe', (req, res) => {
       MongoClient.connect(url, function(err, db) {
         if (err) throw err;
         var dbo = db.db('notification_master');
-        var myobj = { subscription: res['subscription'], app_name: app_name, subscription: id};
+        var myobj = { key: res['subscription'], app_name: app_name, device_id: device_code};
         dbo.collection('subscriptions').removeOne(myobj, function(err, res) {
           if (err) throw err;
           db.close();
