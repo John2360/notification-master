@@ -29,24 +29,46 @@ app.post('/unsubscribe', (req, res) => {
   MongoClient.connect(url, function(err, db) {
     if (err) throw err;
     var dbo = db.db('notification_master');
-    
-    dbo.collection('users').find({"email": email}, function(err, result) {
-      console.log(result);
+    var myobj = { email: email, app_name: app_name, subscription: id};
+    var myobj = { email: email};
+    dbo.collection('users').findOne(myobj, function(err, res) {
       if (err) throw err;
+
       MongoClient.connect(url, function(err, db) {
         if (err) throw err;
         var dbo = db.db('notification_master');
-        console.log(result);
-        var myobj = { key: result['subscription'], app_name: app_name, device_id: device_code};
-        
-        dbo.collection('subscriptions').deleteOne(myobj, function(err, result) {
+        var myobj = { subscription: res['subscription'], app_name: app_name, subscription: id};
+        dbo.collection('subscriptions').removeOne(myobj, function(err, res) {
           if (err) throw err;
           db.close();
         });
       });
+
       db.close();
     });
   });
+
+  // MongoClient.connect(url, function(err, db) {
+  //   if (err) throw err;
+  //   var dbo = db.db('notification_master');
+    
+  //   dbo.collection('users').find({"email": email}, function(err, result) {
+  //     console.log(result);
+  //     if (err) throw err;
+  //     MongoClient.connect(url, function(err, db) {
+  //       if (err) throw err;
+  //       var dbo = db.db('notification_master');
+  //       console.log(result);
+  //       var myobj = { key: result['subscription'], app_name: app_name, device_id: device_code};
+        
+  //       dbo.collection('subscriptions').deleteOne(myobj, function(err, result) {
+  //         if (err) throw err;
+  //         db.close();
+  //       });
+  //     });
+  //     db.close();
+  //   });
+  // });
 
   res.status(201).json({});
 
