@@ -120,6 +120,51 @@ app.post('/send', (req, res) => {
   res.status(201).json({});
 });
 
+app.post('/sendall', (req, res) => {
+  const app_name = req.body.app_name;
+
+  const title = req.body.title;
+  const body = req.body.body;
+  const icon = req.body.icon;
+
+  const payload = JSON.stringify({ title: title, body: body, icon: icon});
+
+  MongoClient.connect(url, function(err, db) {
+    if (err) throw err;
+    var dbo = db.db('notification_master');
+    var query = { app_name: app_name };
+    dbo.collection('users').find(query).toArray(function(err, result) {
+      if (err) throw err;
+      console.log(result);
+      
+      for (let i = 0; i < result.length; i++) {
+        MongoClient.connect(url, function(err, db) {
+          if (err) throw err;
+          var dbo = db.db('notification_master');
+          var query = { key: result[i]['subscription'] };
+          dbo.collection('subscriptions').find(query).toArray(function(err, res) {
+            if (err) throw err;
+            
+            for (let j = 0; j < res.length; j++) {
+              let my_sub = res[j]['subscription'];
+
+              webpush.sendNotification(my_sub, payload).catch(error => {
+                console.error(error.stack);
+              });
+            }
+
+            db.close();
+          }); 
+        });
+      } 
+
+      db.close();
+    });
+  });
+
+  res.status(201).json({});
+});
+
 app.use(require('express-static')('./'));
 
 app.listen(3000);
