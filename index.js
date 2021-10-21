@@ -31,6 +31,7 @@ app.post('/unsubscribe', (req, res) => {
     var dbo = db.db('notification_master');
     
     dbo.collection('users').find({"email": email}, function(err, result) {
+      console.log(result);
       if (err) throw err;
       MongoClient.connect(url, function(err, db) {
         if (err) throw err;
