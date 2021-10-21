@@ -32,7 +32,7 @@ app.post('/unsubscribe', (req, res) => {
     var myobj = { email: email};
     dbo.collection('users').findOne(myobj, function(err, res) {
       if (err) throw err;
-      console.log(res);
+      console.log(res['subscription']);
 
       MongoClient.connect(url, function(err, db) {
         if (err) throw err;
