@@ -48,7 +48,6 @@ app.post('/subscribe', (req, res) => {
   const device_code = req.body.device_id;
 
   MongoClient.connect(url, function(err, db) {
-    //check if user exists and add them
     if (err) throw err;
     var dbo = db.db('notification_master');
     dbo.collection('subscriptions').findOne({"email": email}, function(err, res) {
@@ -57,14 +56,19 @@ app.post('/subscribe', (req, res) => {
       console.log(res);
 
       if (res != null) {
+        MongoClient.connect(url, function(err, db) {
+          if (err) throw err;
         var id = uuidv4();
         var myobj = {key: res['subscription'], app_name: app_name, device_id: device_code, subscription: subscription};
         dbo.collection('subscriptions').insertOne(myobj, function(err, res) {
           if (err) throw err;
           db.close();
         });
+      });
 
       } else {
+        MongoClient.connect(url, function(err, db) {
+          if (err) throw err;
         var id = uuidv4();
         var myobj = {key: id, app_name: app_name, device_id: device_code, subscription: subscription};
         dbo.collection('subscriptions').insertOne(myobj, function(err, res) {
@@ -78,6 +82,8 @@ app.post('/subscribe', (req, res) => {
               if (err) throw err;
               db.close();
             });
+          });
+          db.close();
           });
           db.close();
         });
