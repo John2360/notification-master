@@ -2,8 +2,16 @@ const { v4: uuidv4 } = require('uuid');
 const express = require('express');
 const webpush = require('web-push');
 var cors = require('cors');
+var fs = require('fs');
 require('dotenv').config()
+const https = require('https');
 
+var options = {
+  key: fs.readFileSync('../server.key'),
+  cert: fs.readFileSync('../server.cert')
+};
+
+const port = 8443;
 
 const publicVapidKey = process.env.PUBLIC_KEY;
 const privateVapidKey = process.env.PRIVATE_KEY;
@@ -223,4 +231,4 @@ app.post('/sendall', (req, res) => {
 
 app.use(require('express-static')('./'));
 
-app.listen(3000);
+https.createServer(options, app).listen(port);
