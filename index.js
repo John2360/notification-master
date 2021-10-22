@@ -7,13 +7,6 @@ require('dotenv').config()
 const https = require('https');
 const http = require('http');
 
-var options = {
-  key: fs.readFileSync('/home/ubuntu/server.key'),
-  cert: fs.readFileSync('/home/ubuntu//server.cert')
-};
-
-const port = 8443;
-
 const publicVapidKey = process.env.PUBLIC_KEY;
 const privateVapidKey = process.env.PRIVATE_KEY;
 
@@ -210,5 +203,5 @@ app.post('/sendall', (req, res) => {
 
 app.use(require('express-static')('./'));
 
-https.createServer(options, app).listen(8443);
-// http.createServer(app).listen(3000);
+// https.createServer(options, app).listen(8443);
+http.createServer(app).listen(3000);
