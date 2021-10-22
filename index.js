@@ -10,8 +10,10 @@ const http = require('http');
 const publicVapidKey = process.env.PUBLIC_KEY;
 const privateVapidKey = process.env.PRIVATE_KEY;
 
+const mongoDBServer = process.env.SERVER;
+
 var MongoClient = require('mongodb').MongoClient;
-var url = "mongodb://localhost:27017/";
+var url = "mongodb://"+mongoDBServer+":27017/";
 
 // Replace with your email
 webpush.setVapidDetails('mailto:'+process.env.EMAIL, publicVapidKey, privateVapidKey);
