@@ -5,10 +5,11 @@ var cors = require('cors');
 var fs = require('fs');
 require('dotenv').config()
 const https = require('https');
+const http = require('http');
 
 var options = {
-  key: fs.readFileSync('../server.key'),
-  cert: fs.readFileSync('../server.cert')
+  key: fs.readFileSync('/home/ubuntu/server.key'),
+  cert: fs.readFileSync('/home/ubuntu//server.cert')
 };
 
 const port = 8443;
@@ -54,28 +55,6 @@ app.post('/unsubscribe', (req, res) => {
       db.close();
     });
   });
-
-  // MongoClient.connect(url, function(err, db) {
-  //   if (err) throw err;
-  //   var dbo = db.db('notification_master');
-    
-  //   dbo.collection('users').find({"email": email}, function(err, result) {
-  //     console.log(result);
-  //     if (err) throw err;
-  //     MongoClient.connect(url, function(err, db) {
-  //       if (err) throw err;
-  //       var dbo = db.db('notification_master');
-  //       console.log(result);
-  //       var myobj = { key: result['subscription'], app_name: app_name, device_id: device_code};
-        
-  //       dbo.collection('subscriptions').deleteOne(myobj, function(err, result) {
-  //         if (err) throw err;
-  //         db.close();
-  //       });
-  //     });
-  //     db.close();
-  //   });
-  // });
 
   res.status(201).json({});
 
@@ -231,4 +210,5 @@ app.post('/sendall', (req, res) => {
 
 app.use(require('express-static')('./'));
 
-https.createServer(options, app).listen(port);
+// https.createServer(options, app).listen(port);
+http.createServer(app).listen(3000);
