@@ -5,12 +5,24 @@ var cors = require('cors');
 var fs = require('fs');
 require('dotenv').config()
 const https = require('https');
-const http = require('http');
+// const http = require('http');
 
 const publicVapidKey = process.env.PUBLIC_KEY;
 const privateVapidKey = process.env.PRIVATE_KEY;
 
 const mongoDBServer = process.env.SERVER;
+
+const cert = process.env.CERT;
+const key = process.env.KEY;
+const ca = process.env.CA;
+
+const port = 8443;
+
+var options = {
+  key: key,
+  cert: cert,
+  ca: ca
+};
 
 var MongoClient = require('mongodb').MongoClient;
 var url = "mongodb://"+mongoDBServer+":27017/";
@@ -205,5 +217,5 @@ app.post('/sendall', (req, res) => {
 
 app.use(require('express-static')('./'));
 
-// https.createServer(options, app).listen(8443);
-http.createServer(app).listen(3000);
+https.createServer(options, app).listen(port);
+// http.createServer(app).listen(3000);
